@@ -1,21 +1,26 @@
 function onInterfaceReady() {
   console.log('FR ON READY');
-
   chrome.runtime.sendMessage({
-    action: 'INTERFACE_READY',
-    source: 'WHATEVER'
+    action: 'INTERFACE_READY'
   });
 }
 
 function onJiraRequest(ev) {
-  console.log('EVT_FR_JIRA');
-  console.log(ev);
-
   chrome.runtime.sendMessage({
     action: 'JIRA_REQUEST',
     source: ev.detail
   });
 }
+
+chrome.runtime.onMessage.addListener((request) => {
+  console.log(request);
+
+  const ev = new CustomEvent('SP_JIRA_RESPONSE', {
+    detail: request,
+  });
+  console.log('DISPATCH_CONTENT_SCRIPT', ev);
+  window.dispatchEvent(ev);
+});
 
 window.addEventListener('APP_READY', onInterfaceReady);
 window.addEventListener('SP_JIRA_REQUEST', onJiraRequest);
