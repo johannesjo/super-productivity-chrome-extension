@@ -1,8 +1,29 @@
 const action = 'search';
 const base = 'https://test-sp-app.atlassian.net/rest/api/2';
 
-function handleJiraRequest(tab) {
-  console.log(tab);
+// JIRA API STUFF
+// ---------------------------------
+const requestMap = {
+  'searchJira': (searchString) => {
+    const optional = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+    return doRequest(makeRequestHeader(makeUri({
+      pathname: '/search'
+    }), {
+      method: 'POST',
+      followAllRedirects: true,
+      body: (0, _extends3.default)({
+        jql: searchString
+      }, optional)
+    }));
+  }
+};
+
+
+// MAIN
+// ---------------------------------
+function handleJiraRequest(request) {
+  console.log(request);
   const xhr = new XMLHttpRequest();
   xhr.open('GET', `${base}/${action}`, true);
   xhr.onload = () => {
@@ -55,9 +76,13 @@ chrome.browserAction.onClicked.addListener((tab) => {
 });
 
 chrome.runtime.onMessage.addListener(function(request) {
-  console.log(request);
-  if (request.action === 'interfaceReady') {
-    console.log('BE INTERFACE YEAH');
+  switch (request.action) {
+    case 'INTERFACE_READY':
+      break;
+    case 'JIRA_REQUEST':
+      console.log('BE: Jira Request');
+      handleJiraRequest(request.source);
+      break;
   }
 });
 
