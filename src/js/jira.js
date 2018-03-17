@@ -13,12 +13,12 @@ export class JiraApiWrapper {
     }
   }
 
-  doRequest(request) {
-    return new Promise((resolve, reject) => {
+  doRequest(orgRequest, request) {
+    return new Promise((resolve) => {
       this.xhr({
         uri: `${base}/${request.pathname}`,
         method: 'GET',
-        //body: '',
+        body: request.body,
         headers: {
           'Content-Type': 'application/json'
         }
@@ -26,13 +26,13 @@ export class JiraApiWrapper {
         if (err) {
           resolve({
             error: err,
-            requestId: request.requestId
+            requestId: orgRequest.requestId
           });
         } else if (body) {
-          console.log(JSON.parse(body), request, res);
+          //console.log(JSON.parse(body), request, res);
           resolve({
             response: JSON.parse(body),
-            requestId: request.requestId
+            requestId: orgRequest.requestId
           });
         }
       });
@@ -41,14 +41,11 @@ export class JiraApiWrapper {
 
   searchJira(orgRequest) {
     const optional = orgRequest.arguments.length > 1 && orgRequest.arguments[1] !== undefined ? orgRequest.arguments[1] : {};
-    return this.doRequest({
-      requestId: orgRequest.requestId,
+    return this.doRequest(orgRequest, {
       pathname: '/search',
       method: 'POST',
-      followAllRedirects: true,
       body: Object.assign({ optional }, {
-        //jql: request.arguments[0]
-        jql: 'resolution = Unresolved ORDER BY updatedDate DESC'
+        jql: orgRequest.arguments[0]
       }),
     });
   }
@@ -62,7 +59,15 @@ export class JiraApiWrapper {
   listTransitions() {
   }
 
-  updateIssue() {
+  updateIssue(orgRequest) {
+    const issueId = orgRequest.arguments[0];
+    const issueUpdate = orgRequest.arguments[1];
+
+    return this.doRequest(orgRequest, {
+      pathname: `/issue/${issueId}`,
+      method: 'PUT',
+      body: issueUpdate,
+    });
   }
 
   findIssue() {
