@@ -1,3 +1,6 @@
+import '../img/icon-128.png'
+import '../img/icon-34.png'
+
 const action = 'search';
 const base = 'https://test-sp-app.atlassian.net/rest/api/2';
 
@@ -18,7 +21,6 @@ const requestMap = {
     }));
   }
 };
-
 
 // MAIN
 // ---------------------------------
