@@ -71,17 +71,16 @@ function getSPTabId(cb) {
 function onNavigate(details) {
   if (details.url && isSpUrl(details.url)) {
     // console.log('Recognized SP navigation to: ' + details.url + '.' + 'Refreshing count...');
-    getSPTabId((id) => {
-      initInterface(id);
-    });
-
+    //getSPTabId((id) => {
+    //  initInterface(id);
+    //});
   }
 }
 
 // LISTENER
 // ------------------------------------
 chrome.browserAction.onClicked.addListener((tab) => {
-  console.log('CLICK');
+  console.log('CLICK', tab);
 
 });
 
