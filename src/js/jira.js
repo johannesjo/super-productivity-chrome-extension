@@ -29,7 +29,7 @@ export class JiraApiWrapper {
             requestId: request.requestId
           });
         } else if (body) {
-          console.log(JSON.parse(body), res);
+          console.log(JSON.parse(body), request, res);
           resolve({
             response: JSON.parse(body),
             requestId: request.requestId
@@ -41,8 +41,6 @@ export class JiraApiWrapper {
 
   searchJira(orgRequest) {
     const optional = orgRequest.arguments.length > 1 && orgRequest.arguments[1] !== undefined ? orgRequest.arguments[1] : {};
-    console.log(orgRequest);
-
     return this.doRequest({
       requestId: orgRequest.requestId,
       pathname: '/search',

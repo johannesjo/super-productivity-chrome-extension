@@ -61,8 +61,6 @@ function getSPTabId(cb) {
   chrome.tabs.query({
     url: SP_URL + '/*'
   }, (tabs) => {
-    console.log('QUERY TABS', tabs);
-
     if (tabs && tabs[0]) {
       _tabId = tabs[0].id;
     }
@@ -72,8 +70,7 @@ function getSPTabId(cb) {
 
 function onNavigate(details) {
   if (details.url && isSpUrl(details.url)) {
-    console.log('Recognized SP navigation to: ' + details.url + '.' +
-      'Refreshing count...');
+    // console.log('Recognized SP navigation to: ' + details.url + '.' + 'Refreshing count...');
     getSPTabId((id) => {
       initInterface(id);
     });
@@ -94,10 +91,7 @@ chrome.runtime.onMessage.addListener(function(request) {
       throw 'No super productivity tab id';
     } else {
       switch (request.action) {
-        case 'INTERFACE_READY':
-          break;
         case 'JIRA_REQUEST':
-          console.log('BE: Jira Request');
           handleJiraRequest(request.source);
           break;
       }
