@@ -23,3 +23,6 @@ window.dispatchEvent(initEv);
 setTimeout(() => {
   window.dispatchEvent(initEv);
 }, 3000);
+setTimeout(() => {
+  window.dispatchEvent(initEv);
+}, 10000);
