@@ -16,3 +16,10 @@ window.addEventListener('SP_JIRA_REQUEST', onJiraRequest);
 
 // set permanent info for frontend
 window.localStorage.setItem('SUPER_PRODUCTIVITY_CHROME_EXTENSION', 'IS_ENABLED');
+
+const initEv = new Event('SP_EXTENSION_READY');
+window.dispatchEvent(initEv);
+// dispatch again just in case the page was not loaded yet
+setTimeout(() => {
+  window.dispatchEvent(initEv);
+}, 3000);
