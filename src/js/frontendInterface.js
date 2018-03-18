@@ -10,8 +10,6 @@ if (!window.isSupExtensionInjected) {
 }
 
 function onJiraRequest(ev) {
-  console.log('Content Script Jira Request ---');
-
   chrome.runtime.sendMessage({
     action: 'JIRA_REQUEST',
     source: ev.detail
