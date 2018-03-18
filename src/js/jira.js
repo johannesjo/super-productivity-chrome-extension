@@ -2,7 +2,8 @@ import xhr from 'xhr';
 
 // @see https://confluence.atlassian.com/cloud/api-tokens-938839638.html
 
-const base = 'https://test-sp-app.atlassian.net/rest/api/2';
+//const base = 'https://test-sp-app.atlassian.net/rest/api/2';
+const base = 'https://test-sp-app.atlassian.net/rest/api/latest';
 
 function b64EncodeUnicode(str) {
   return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g,
@@ -24,6 +25,7 @@ export class JiraApiWrapper {
 
   doRequest(orgRequest, request) {
     const encoded = b64EncodeUnicode(`${orgRequest.config.userName}:${orgRequest.config.password}`);
+
     console.log(request.body);
 
     return new Promise((resolve) => {
@@ -69,10 +71,11 @@ export class JiraApiWrapper {
 
   searchJira(orgRequest) {
     const optional = orgRequest.arguments.length > 1 && orgRequest.arguments[1] !== undefined ? orgRequest.arguments[1] : {};
+
     return this.doRequest(orgRequest, {
       pathname: '/search',
       method: 'POST',
-      body: Object.assign({ optional }, {
+      body: Object.assign(optional, {
         jql: orgRequest.arguments[0]
       }),
     });
