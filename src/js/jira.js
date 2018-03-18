@@ -1,8 +1,6 @@
 import xhr from 'xhr';
 import queryStringParser from 'query-string';
 
-const base = 'https://test-sp-app.atlassian.net/rest/api/latest';
-
 export class JiraApiWrapper {
   constructor() {
     this.xhr = xhr;
@@ -26,6 +24,7 @@ export class JiraApiWrapper {
   doRequest(orgRequest, request) {
     const encoded = this._b64EncodeUnicode(`${orgRequest.config.userName}:${orgRequest.config.password}`);
     const queryStr = request.query ? `?${this.queryStringParser(request.query)}` : '';
+    const base = `${orgRequest.config.host}/rest/api/latest`;
 
     return new Promise((resolve) => {
 
