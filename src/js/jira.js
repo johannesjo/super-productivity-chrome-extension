@@ -1,15 +1,12 @@
 import xhr from 'xhr';
-//import queryStringParser from 'query-string';
+import queryStringParser from 'query-string';
 
-// @see https://confluence.atlassian.com/cloud/api-tokens-938839638.html
-
-//const base = 'https://test-sp-app.atlassian.net/rest/api/2';
 const base = 'https://test-sp-app.atlassian.net/rest/api/latest';
 
 export class JiraApiWrapper {
   constructor() {
     this.xhr = xhr;
-    //this.queryStringParser = queryStringParser;
+    this.queryStringParser = queryStringParser;
   }
 
   execRequest(request) {
@@ -29,13 +26,12 @@ export class JiraApiWrapper {
 
   doRequest(orgRequest, request) {
     const encoded = this._b64EncodeUnicode(`${orgRequest.config.userName}:${orgRequest.config.password}`);
-    //const query =  request.query ? this.queryStringParser(request.query) : '';
-    //console.log(query);
+    const queryStr = request.query ? this.queryStringParser(request.query) : '';
 
     return new Promise((resolve) => {
 
       this.xhr({
-        uri: `${base}/${request.pathname}`,
+        uri: `${base}/${request.pathname}${queryStr}`,
         method: request.method || 'GET',
         body: JSON.stringify(request.body),
         headers: {
