@@ -10,7 +10,7 @@ export class JiraApiWrapper {
   }
 
   execRequest(request) {
-    console.log('SPEX:JiraApiWrapper:Request', request.apiMethod);
+    console.log(`SPEX:JiraApiWrapper:Request:${request.apiMethod}`, request);
     if (request.apiMethod) {
       return this[request.apiMethod](request);
     }
@@ -149,5 +149,13 @@ export class JiraApiWrapper {
   }
 
   transitionIssue(orgRequest) {
+    const issueId = orgRequest.arguments[0];
+    const issueTransition = orgRequest.arguments[1];
+
+    return this.doRequest(orgRequest, {
+      pathname: `issue/${issueId}/transitions`,
+      method: 'POST',
+      body: issueTransition
+    });
   }
 }
