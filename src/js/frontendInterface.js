@@ -1,22 +1,31 @@
-let isInjected;
-if (!isInjected) {
-  console.log('ISINJECTED', true);
-  isInjected = true;
+// prevent multiple injections (should only happen during development)
+if (!window.isSupExtensionInjected) {
+  window.isSupExtensionInjected = true;
+  window.supExtensionEventListeners = [];
   init();
 } else {
-  alert('IT HAPPEND!')
+  console.warn('SP-EXT: Content Script Injection blocked. Reinitializing...');
+  removeEventListeners();
+  init();
+}
+
+function onJiraRequest(ev) {
+  console.log('Content Script Jira Request ---');
+
+  chrome.runtime.sendMessage({
+    action: 'JIRA_REQUEST',
+    source: ev.detail
+  });
+}
+
+function attachEventListenerForApp(evName, evHandlerFn) {
+  const evObj = {};
+  evObj[evName] = evHandlerFn;
+  window.supExtensionEventListeners.push(evObj);
+  window.addEventListener(evName, evHandlerFn);
 }
 
 function init() {
-  function onJiraRequest(ev) {
-    console.log('Content Script Jira Request ---');
-    
-    chrome.runtime.sendMessage({
-      action: 'JIRA_REQUEST',
-      source: ev.detail
-    });
-  }
-
   chrome.runtime.onMessage.addListener((request) => {
     const ev = new CustomEvent('SP_JIRA_RESPONSE', {
       detail: request,
@@ -24,7 +33,7 @@ function init() {
     window.dispatchEvent(ev);
   });
 
-  window.addEventListener('SP_JIRA_REQUEST', onJiraRequest);
+  attachEventListenerForApp('SP_JIRA_REQUEST', onJiraRequest);
 
 // set permanent info for frontend
   window.localStorage.setItem('SUPER_PRODUCTIVITY_CHROME_EXTENSION', 'IS_ENABLED');
@@ -38,4 +47,14 @@ function init() {
   setTimeout(() => {
     window.dispatchEvent(initEv);
   }, 10000);
+}
+
+function removeEventListeners() {
+  window.supExtensionEventListeners.forEach((evObj) => {
+    const evName = Object.keys(evObj)[0];
+    const evFn = evObj[evName];
+    window.removeEventListener(evName, evFn);
+  });
+
+  window.supExtensionEventListeners = [];
 }
