@@ -1,11 +1,10 @@
 import xhr from 'xhr';
 
+// @see https://confluence.atlassian.com/cloud/api-tokens-938839638.html
+
 const base = 'https://test-sp-app.atlassian.net/rest/api/2';
 
 function b64EncodeUnicode(str) {
-  // first we use encodeURIComponent to get percent-encoded UTF-8,
-  // then we convert the percent encodings into raw bytes which
-  // can be fed into btoa.
   return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g,
     function toSolidBytes(match, p1) {
       return String.fromCharCode('0x' + p1);
@@ -24,7 +23,7 @@ export class JiraApiWrapper {
   }
 
   doRequest(orgRequest, request) {
-    console.log(request);
+    const encoded = b64EncodeUnicode(`${orgRequest.config.userName}:${orgRequest.config.password}`);
 
     return new Promise((resolve) => {
       this.xhr({
@@ -32,13 +31,18 @@ export class JiraApiWrapper {
         method: 'GET',
         body: request.body,
         headers: {
-          'Authentication': b64EncodeUnicode(`${orgRequest.config.userName}:${orgRequest.config.password}`),
+          'Authorization': `Basic ${encoded}`,
           'Content-Type': 'application/json'
         }
       }, function(err, res, body) {
         if (err) {
           resolve({
             error: err,
+            requestId: orgRequest.requestId
+          });
+        } else if (res.statusCode >= 300) {
+          resolve({
+            error: res.statusCode,
             requestId: orgRequest.requestId
           });
         } else if (body) {
