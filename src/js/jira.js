@@ -1,4 +1,5 @@
 import xhr from 'xhr';
+//import queryStringParser from 'query-string';
 
 // @see https://confluence.atlassian.com/cloud/api-tokens-938839638.html
 
@@ -8,9 +9,12 @@ const base = 'https://test-sp-app.atlassian.net/rest/api/latest';
 export class JiraApiWrapper {
   constructor() {
     this.xhr = xhr;
+    //this.queryStringParser = queryStringParser;
   }
 
   execRequest(request) {
+    console.log(request.apiMethod);
+
     if (request.apiMethod) {
       return this[request.apiMethod](request);
     }
@@ -25,11 +29,14 @@ export class JiraApiWrapper {
 
   doRequest(orgRequest, request) {
     const encoded = this._b64EncodeUnicode(`${orgRequest.config.userName}:${orgRequest.config.password}`);
+    //const query =  request.query ? this.queryStringParser(request.query) : '';
+    //console.log(query);
 
     return new Promise((resolve) => {
+
       this.xhr({
         uri: `${base}/${request.pathname}`,
-        method: request.method,
+        method: request.method || 'GET',
         body: JSON.stringify(request.body),
         headers: {
           'authorization': `Basic ${encoded}`,
@@ -61,6 +68,11 @@ export class JiraApiWrapper {
               requestId: orgRequest.requestId
             });
           }
+        } else if (!body) {
+          resolve({
+            response: null,
+            requestId: orgRequest.requestId
+          });
         }
       });
     });
@@ -89,10 +101,27 @@ export class JiraApiWrapper {
     });
   }
 
-  searchUsers() {
+  searchUsers(orgRequest) {
+    const username = arguments[0].username;
+    const startAt = arguments[0].startAt;
+    const maxResults = arguments[0].maxResults;
+    const includeActive = arguments[0].includeActive;
+    const includeInactive = arguments[0].includeInactive;
+
+    return this.doRequest(orgRequest, {
+      pathname: '/user/search',
+      method: 'GET',
+      query: {
+        username: username,
+        startAt: startAt || 0,
+        maxResults: maxResults || 50,
+        includeActive: includeActive || true,
+        includeInactive: includeInactive || false
+      }
+    });
   }
 
-  listTransitions() {
+  listTransitions(orgRequest) {
   }
 
   updateIssue(orgRequest) {
@@ -115,6 +144,6 @@ export class JiraApiWrapper {
     });
   }
 
-  transitionIssue() {
+  transitionIssue(orgRequest) {
   }
 }
