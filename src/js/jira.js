@@ -5,13 +5,6 @@ import xhr from 'xhr';
 //const base = 'https://test-sp-app.atlassian.net/rest/api/2';
 const base = 'https://test-sp-app.atlassian.net/rest/api/latest';
 
-function b64EncodeUnicode(str) {
-  return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g,
-    function toSolidBytes(match, p1) {
-      return String.fromCharCode('0x' + p1);
-    }));
-}
-
 export class JiraApiWrapper {
   constructor() {
     this.xhr = xhr;
@@ -23,23 +16,26 @@ export class JiraApiWrapper {
     }
   }
 
-  doRequest(orgRequest, request) {
-    const encoded = b64EncodeUnicode(`${orgRequest.config.userName}:${orgRequest.config.password}`);
+  _b64EncodeUnicode(str) {
+    return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g,
+      function toSolidBytes(match, p1) {
+        return String.fromCharCode('0x' + p1);
+      }));
+  }
 
-    console.log(request.body);
+  doRequest(orgRequest, request) {
+    const encoded = this._b64EncodeUnicode(`${orgRequest.config.userName}:${orgRequest.config.password}`);
 
     return new Promise((resolve) => {
       this.xhr({
         uri: `${base}/${request.pathname}`,
-        method: 'GET',
-        body: request.body,
+        method: request.method,
+        body: JSON.stringify(request.body),
         headers: {
-          'Authorization': `Basic ${encoded}`,
+          'authorization': `Basic ${encoded}`,
           'Content-Type': 'application/json'
         }
       }, function(err, res, body) {
-        console.log(res);
-
         if (err) {
           resolve({
             error: err,
@@ -52,6 +48,7 @@ export class JiraApiWrapper {
           });
         } else if (body) {
           const parsed = JSON.parse(body);
+
           const err = parsed.errorMessages || parsed.errors;
           if (err) {
             resolve({
