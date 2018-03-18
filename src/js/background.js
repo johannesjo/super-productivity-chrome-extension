@@ -2,9 +2,12 @@ import '../img/icon_32x32.png'
 import '../img/icon_128x128.png'
 import { JiraApiWrapper } from './jira';
 
+let isInterfaceInitialized = false;
 const jira = new JiraApiWrapper();
 
-const SP_URL = 'http://localhost';
+// const SP_URL = 'http://localhost';
+const SP_URL = 'https://super-productivity.com/app';
+
 // init once
 getSPTabId((id) => {
   initInterface(id);
@@ -35,6 +38,7 @@ function initInterface(passedTabId) {
     if (passedTabId === saveTabId) {
       console.log('Not initializing because we did so before');
     } else {
+      isInterfaceInitialized = true;
       saveTabId = passedTabId;
       chrome.tabs.executeScript(saveTabId, {
         file: 'frontendInterface.bundle.js',
@@ -81,6 +85,9 @@ function onNavigate(details) {
 // ------------------------------------
 chrome.browserAction.onClicked.addListener((tab) => {
   console.log('CLICK', tab);
+  if (!isInterfaceInitialized) {
+    chrome.tabs.create({ url: SP_URL });
+  }
 
 });
 
