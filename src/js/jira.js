@@ -6,7 +6,7 @@ const base = 'https://test-sp-app.atlassian.net/rest/api/latest';
 export class JiraApiWrapper {
   constructor() {
     this.xhr = xhr;
-    this.queryStringParser = queryStringParser;
+    this.queryStringParser = queryStringParser.stringify;
   }
 
   execRequest(request) {
@@ -26,7 +26,7 @@ export class JiraApiWrapper {
 
   doRequest(orgRequest, request) {
     const encoded = this._b64EncodeUnicode(`${orgRequest.config.userName}:${orgRequest.config.password}`);
-    const queryStr = request.query ? this.queryStringParser(request.query) : '';
+    const queryStr = request.query ? `?${this.queryStringParser(request.query)}` : '';
 
     return new Promise((resolve) => {
 
@@ -118,6 +118,15 @@ export class JiraApiWrapper {
   }
 
   listTransitions(orgRequest) {
+    const issueId = orgRequest.arguments[0];
+
+    return this.doRequest(orgRequest, {
+      pathname: `issue/${issueId}/transitions`,
+      method: 'GET',
+      query: {
+        expand: 'transitions.fields'
+      }
+    });
   }
 
   updateIssue(orgRequest) {
