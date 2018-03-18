@@ -24,6 +24,7 @@ export class JiraApiWrapper {
 
   doRequest(orgRequest, request) {
     const encoded = b64EncodeUnicode(`${orgRequest.config.userName}:${orgRequest.config.password}`);
+    console.log(request.body);
 
     return new Promise((resolve) => {
       this.xhr({
@@ -35,6 +36,8 @@ export class JiraApiWrapper {
           'Content-Type': 'application/json'
         }
       }, function(err, res, body) {
+        console.log(res);
+
         if (err) {
           resolve({
             error: err,
@@ -75,7 +78,15 @@ export class JiraApiWrapper {
     });
   }
 
-  addWorklog() {
+  addWorklog(orgRequest) {
+    const issueId = orgRequest.arguments[0];
+    const worklog = orgRequest.arguments[1];
+
+    return this.doRequest(orgRequest, {
+      pathname: `issue/${issueId}/worklog`,
+      method: 'POST',
+      body: worklog,
+    });
   }
 
   searchUsers() {
@@ -95,7 +106,13 @@ export class JiraApiWrapper {
     });
   }
 
-  findIssue() {
+  findIssue(orgRequest) {
+    const issueId = orgRequest.arguments[0];
+
+    return this.doRequest(orgRequest, {
+      pathname: `issue/${issueId}`,
+      method: 'GET',
+    });
   }
 
   transitionIssue() {
