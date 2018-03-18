@@ -10,8 +10,7 @@ export class JiraApiWrapper {
   }
 
   execRequest(request) {
-    console.log(request.apiMethod);
-
+    console.log('SPEX:JiraApiWrapper:Request', request.apiMethod);
     if (request.apiMethod) {
       return this[request.apiMethod](request);
     }
@@ -98,11 +97,11 @@ export class JiraApiWrapper {
   }
 
   searchUsers(orgRequest) {
-    const username = arguments[0].username;
-    const startAt = arguments[0].startAt;
-    const maxResults = arguments[0].maxResults;
-    const includeActive = arguments[0].includeActive;
-    const includeInactive = arguments[0].includeInactive;
+    const username = orgRequest.arguments[0].username;
+    const startAt = orgRequest.arguments[0].startAt;
+    const maxResults = orgRequest.arguments[0].maxResults;
+    const includeActive = orgRequest.arguments[0].includeActive;
+    const includeInactive = orgRequest.arguments[0].includeInactive;
 
     return this.doRequest(orgRequest, {
       pathname: '/user/search',
