@@ -21,8 +21,7 @@
         "frontendInterface.bundle.js"
       ],
       "matches": [
-        "*://super-productivity.com/app/*",
-        "*://localhost:*/*"
+        "*://super-productivity.com/app/*"
       ],
       "all_frames": true
     }
