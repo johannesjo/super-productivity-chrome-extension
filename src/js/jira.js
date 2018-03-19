@@ -9,8 +9,10 @@ export class JiraApiWrapper {
 
   execRequest(request) {
     console.log(`SPEX:JiraApiWrapper:Request:${request.apiMethod}`, request);
-    if (request.apiMethod) {
+    if (request.apiMethod && this[request.apiMethod]) {
       return this[request.apiMethod](request);
+    } else {
+      throw new Error('SPEX:JiraApiWrapper: invalid request ' + request.apiMethod);
     }
   }
 
