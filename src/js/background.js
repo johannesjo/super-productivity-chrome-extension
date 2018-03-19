@@ -5,7 +5,7 @@ import { JiraApiWrapper } from './jira';
 let isInterfaceInitialized = false;
 const jira = new JiraApiWrapper();
 
-// const SP_URL = 'http://localhost';
+//const SP_URL = 'http://localhost';
 const SP_URL = 'https://super-productivity.com/app';
 
 // init once
@@ -56,10 +56,9 @@ function initInterface(passedTabId) {
 
 // HELPER
 // ------------------------------------
-function isSpUrl(url) {
-  return url.startsWith(SP_URL);
-}
 
+// NOTE: we need all this logic instead of using the manifest to prevent
+// jira pre-flight issue
 function getSPTabId(cb) {
   let _tabId = false;
   chrome.tabs.query({
@@ -72,15 +71,6 @@ function getSPTabId(cb) {
   });
 }
 
-function onNavigate(details) {
-  if (details.url && isSpUrl(details.url)) {
-    // console.log('Recognized SP navigation to: ' + details.url + '.' + 'Refreshing count...');
-    //getSPTabId((id) => {
-    //  initInterface(id);
-    //});
-  }
-}
-
 // LISTENER
 // ------------------------------------
 chrome.browserAction.onClicked.addListener((tab) => {
@@ -88,7 +78,6 @@ chrome.browserAction.onClicked.addListener((tab) => {
   if (!isInterfaceInitialized) {
     chrome.tabs.create({ url: SP_URL });
   }
-
 });
 
 chrome.runtime.onMessage.addListener(function(request) {
@@ -103,23 +92,4 @@ chrome.runtime.onMessage.addListener(function(request) {
       }
     }
   });
-
 });
-
-// INIT INTERFACE STUFF
-// ------------------------------------
-
-// also init when url was entered later
-if (chrome.webNavigation && chrome.webNavigation.onDOMContentLoaded &&
-  chrome.webNavigation.onReferenceFragmentUpdated) {
-  const filters = {
-    url: [{ urlContains: SP_URL.replace(/^https?\:\/\//, '') }]
-  };
-  chrome.webNavigation.onDOMContentLoaded.addListener(onNavigate, filters);
-  chrome.webNavigation.onReferenceFragmentUpdated.addListener(
-    onNavigate, filters);
-} else {
-  chrome.tabs.onUpdated.addListener(function(_, details) {
-    onNavigate(details);
-  });
-}
