@@ -18,7 +18,7 @@ getSPTabId((id) => {
 function handleJiraRequest(request) {
   jira.execRequest(request)
     .then((res) => {
-      console.log('SPEX:jira.execRequest:Response:', res);
+      console.log(`SPEX:background:jira.execRequest:${request.apiMethod}:Response:`, res);
 
       getSPTabId((id) => {
         if (id) {
