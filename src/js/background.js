@@ -5,7 +5,7 @@ import { JiraApiWrapper } from './jira';
 let isInterfaceInitialized = false;
 const jira = new JiraApiWrapper();
 
-//const SP_URL = 'http://localhost';
+const SP_DEV_URL = 'http://localhost';
 const SP_URL = 'https://super-productivity.com/app';
 
 // init once
@@ -24,7 +24,7 @@ function handleJiraRequest(request) {
         if (id) {
           chrome.tabs.sendMessage(id, res);
         } else {
-          throw 'No super productivity tab id';
+          throw 'SPEX:background: No super productivity tab id';
         }
       });
     });
@@ -62,10 +62,17 @@ function initInterface(passedTabId) {
 function getSPTabId(cb) {
   let _tabId = false;
   chrome.tabs.query({
-    url: SP_URL + '/*'
+    url: [
+      SP_URL + '/*',
+      SP_DEV_URL + '/*',
+    ]
   }, (tabs) => {
     if (tabs && tabs[0]) {
       _tabId = tabs[0].id;
+    }
+
+    if(tabs && tabs.length > 1){
+      console.warn('SPEX:background: Multiple tabs with App found');
     }
     cb(_tabId);
   });
