@@ -76,7 +76,7 @@ export class JiraApiWrapper {
     const optional = orgRequest.arguments.length > 1 && orgRequest.arguments[1] !== undefined ? orgRequest.arguments[1] : {};
 
     return this.doRequest(orgRequest, {
-      pathname: '/search',
+      pathname: 'search',
       method: 'POST',
       body: Object.assign(optional, {
         jql: orgRequest.arguments[0]
@@ -103,7 +103,7 @@ export class JiraApiWrapper {
     const includeInactive = orgRequest.arguments[0].includeInactive;
 
     return this.doRequest(orgRequest, {
-      pathname: '/user/search',
+      pathname: 'user/search',
       method: 'GET',
       query: {
         username: username,
