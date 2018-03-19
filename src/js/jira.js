@@ -25,11 +25,13 @@ export class JiraApiWrapper {
     const encoded = this._b64EncodeUnicode(`${orgRequest.config.userName}:${orgRequest.config.password}`);
     const queryStr = request.query ? `?${this.queryStringParser(request.query)}` : '';
     const base = `${orgRequest.config.host}/rest/api/latest`;
+    // cleanup just in case
+    const uri = `${base}/${request.pathname}${queryStr}`.trim().replace('//', '/');
 
     return new Promise((resolve) => {
 
       this.xhr({
-        uri: `${base}/${request.pathname}${queryStr}`,
+        uri: uri,
         method: request.method || 'GET',
         body: JSON.stringify(request.body),
         headers: {
