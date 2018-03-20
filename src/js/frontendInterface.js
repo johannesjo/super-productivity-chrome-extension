@@ -24,6 +24,8 @@ function attachEventListenerForApp(evName, evHandlerFn) {
 }
 
 function init() {
+  console.log('SPEX injected');
+
   chrome.runtime.onMessage.addListener((request) => {
     const ev = new CustomEvent('SP_JIRA_RESPONSE', {
       detail: request,

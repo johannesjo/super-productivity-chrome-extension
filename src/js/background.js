@@ -1,5 +1,6 @@
 import '../img/icon_32x32.png'
 import '../img/icon_128x128.png'
+import { IS_DEV } from 'cfg';
 import { JiraApiWrapper } from './jira';
 
 let isInterfaceInitialized = false;
@@ -7,6 +8,18 @@ const jira = new JiraApiWrapper();
 
 const SP_DEV_URL = 'http://localhost';
 const SP_URL = 'https://super-productivity.com/app';
+
+let injectUrls;
+if (IS_DEV) {
+  console.log('SPEX:background IS_DEV=true');
+  injectUrls = [
+    SP_DEV_URL + '/*',
+  ]
+} else {
+  injectUrls = [
+    SP_URL + '/*',
+  ]
+}
 
 // init once
 getSPTabId((id) => {
@@ -62,16 +75,13 @@ function initInterface(passedTabId) {
 function getSPTabId(cb) {
   let _tabId = false;
   chrome.tabs.query({
-    url: [
-      SP_URL + '/*',
-      SP_DEV_URL + '/*',
-    ]
+    url: injectUrls,
   }, (tabs) => {
     if (tabs && tabs[0]) {
       _tabId = tabs[0].id;
     }
 
-    if(tabs && tabs.length > 1){
+    if (tabs && tabs.length > 1) {
       console.warn('SPEX:background: Multiple tabs with App found');
     }
     cb(_tabId);

@@ -10,13 +10,20 @@ const webpack = require('webpack'),
 // load the secrets
 const alias = {};
 
+const cfgPath = path.join(__dirname, ('cfg.' + env.NODE_ENV + '.js'));
 const secretsPath = path.join(__dirname, ('secrets.' + env.NODE_ENV + '.js'));
 
 const fileExtensions = ['jpg', 'jpeg', 'png', 'gif', 'eot', 'otf', 'svg', 'ttf', 'woff', 'woff2'];
 
+if (fileSystem.existsSync(cfgPath)) {
+  alias['cfg'] = cfgPath;
+}
+
 if (fileSystem.existsSync(secretsPath)) {
   alias['secrets'] = secretsPath;
 }
+
+const IS_DEV = (env.NODE_ENV === 'development');
 
 const options = {
   entry: {
@@ -52,7 +59,7 @@ const options = {
     ]
   },
   resolve: {
-    alias: alias
+    alias: alias,
   },
   plugins: [
     // clean the build folder
@@ -91,7 +98,7 @@ const options = {
   ]
 };
 
-if (env.NODE_ENV === 'development') {
+if (IS_DEV) {
   options.devtool = 'cheap-module-eval-source-map';
 }
 

@@ -29,7 +29,6 @@
   "permissions": [
     "activeTab",
     "tabs",
-    "http://localhost",
     "<all_urls>",
     "webRequest"
   ]
