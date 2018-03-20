@@ -9,13 +9,15 @@ const jira = new JiraApiWrapper();
 let SP_URL = 'https://super-productivity.com/app';
 
 if (IS_DEV) {
-  console.log('SPEX:background IS_DEV=true');
+  //console.log('SPEX:background IS_DEV=true');
   SP_URL = 'http://localhost';
 }
 
 // init once
 getSPTabId((id) => {
-  initInterfaceForTab(id);
+  if (id) {
+    initInterfaceForTab(id);
+  }
 });
 
 // MAIN
@@ -23,7 +25,7 @@ getSPTabId((id) => {
 function handleJiraRequest(request) {
   jira.execRequest(request)
     .then((res) => {
-      console.log(`SPEX:background:jira.execRequest:${request.apiMethod}:Response:`, res);
+      //console.log(`SPEX:background:jira.execRequest:${request.apiMethod}:Response:`, res);
 
       getSPTabId((id) => {
         if (id) {
@@ -96,34 +98,32 @@ chrome.runtime.onMessage.addListener(function(request) {
 
 // HANDLE NAVIGATING TO SP AND RELOADING
 // --------------------------------------
-function onNavigate(details) {
-  if (details.url && isSpUrl(details.url)) {
-    console.log('SPEX:background: Recognized SP navigation to: ' + details.url + '.' + 'Refreshing count...');
-    getSPTabId((id) => {
-      initInterfaceForTab(id);
-    });
-  }
-}
 
 function isSpUrl(url) {
   return url.startsWith(SP_URL);
 }
 
-chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
-  if (isSpUrl(tab.url)) {
-    initInterfaceForTab(tabId);
+// also init when url was entered later
+// also this logic is required to make sure, it is injected on reloads,
+// but not if the route inside sp app changes
+let tabMap = {};
+chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+  const url = tab.url;
+
+  if (
+    url
+    && isSpUrl(url)
+    && (changeInfo.status === 'complete')
+  ) {
+    // only trigger for reloads or in
+    if ((!tabMap[tabId] || (tabMap[tabId] === url))) {
+      console.log(`SPEX:background: Recognized Dynamic load of SP App url`);
+      tabMap[tabId] = url;
+      initInterfaceForTab(tabId);
+    }
+    tabMap[tabId] = url;
+  } else if (tabMap[tabId] && (changeInfo.status === 'loading') && !isSpUrl(url)) {
+    // remove
+    delete tabMap[tabId];
   }
 });
-
-// also init when url was entered later
-if (chrome.webNavigation && chrome.webNavigation.onDOMContentLoaded &&
-  chrome.webNavigation.onReferenceFragmentUpdated) {
-  const filters = {
-    url: [{ urlContains: SP_URL.replace(/^https?\:\/\//, '') }]
-  };
-  chrome.webNavigation.onDOMContentLoaded.addListener(onNavigate, filters);
-} else {
-  chrome.tabs.onUpdated.addListener(function(_, details) {
-    onNavigate(details);
-  });
-}
