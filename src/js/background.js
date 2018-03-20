@@ -9,7 +9,7 @@ const jira = new JiraApiWrapper();
 let SP_URL = 'https://super-productivity.com/app';
 
 if (IS_DEV) {
-  //console.log('SPEX:background IS_DEV=true');
+  console.log('SPEX:background IS_DEV=true');
   SP_URL = 'http://localhost';
 }
 
@@ -25,7 +25,7 @@ getSPTabId((id) => {
 function handleJiraRequest(request) {
   jira.execRequest(request)
     .then((res) => {
-      //console.log(`SPEX:background:jira.execRequest:${request.apiMethod}:Response:`, res);
+      console.log(`SPEX:background:jira.execRequest:${request.apiMethod}:Response:`, res);
 
       getSPTabId((id) => {
         if (id) {
