@@ -6,24 +6,16 @@ import { JiraApiWrapper } from './jira';
 let isInterfaceInitialized = false;
 const jira = new JiraApiWrapper();
 
-const SP_DEV_URL = 'http://localhost';
-const SP_URL = 'https://super-productivity.com/app';
+let SP_URL = 'https://super-productivity.com/app';
 
-let injectUrls;
 if (IS_DEV) {
   console.log('SPEX:background IS_DEV=true');
-  injectUrls = [
-    SP_DEV_URL + '/*',
-  ]
-} else {
-  injectUrls = [
-    SP_URL + '/*',
-  ]
+  SP_URL = 'http://localhost';
 }
 
 // init once
 getSPTabId((id) => {
-  initInterface(id);
+  initInterfaceForTab(id);
 });
 
 // MAIN
@@ -43,28 +35,17 @@ function handleJiraRequest(request) {
     });
 }
 
-let saveTabId;
+function initInterfaceForTab(passedTabId) {
+  chrome.tabs.executeScript(passedTabId, {
+    file: 'frontendInterface.bundle.js',
+    allFrames: true,
+    runAt: 'document_idle'
+  }, () => {
 
-function initInterface(passedTabId) {
-  // do nothing if initialized here previously
-  if (passedTabId) {
-    if (passedTabId === saveTabId) {
-      console.log('Not initializing because we did so before');
-    } else {
-      isInterfaceInitialized = true;
-      saveTabId = passedTabId;
-      chrome.tabs.executeScript(saveTabId, {
-        file: 'frontendInterface.bundle.js',
-        allFrames: true,
-        runAt: 'document_idle'
-      }, () => {
-        // If you try and inject into an extensions page or the webstore/NTP you'll get an error
-        if (chrome.runtime.lastError) {
-          console.error(chrome.runtime.lastError);
-        }
-      });
+    if (chrome.runtime.lastError) {
+      console.error(chrome.runtime.lastError);
     }
-  }
+  });
 }
 
 // HELPER
@@ -75,7 +56,9 @@ function initInterface(passedTabId) {
 function getSPTabId(cb) {
   let _tabId = false;
   chrome.tabs.query({
-    url: injectUrls,
+    url: [
+      SP_URL + '/*',
+    ],
   }, (tabs) => {
     if (tabs && tabs[0]) {
       _tabId = tabs[0].id;
@@ -110,3 +93,37 @@ chrome.runtime.onMessage.addListener(function(request) {
     }
   });
 });
+
+// HANDLE NAVIGATING TO SP AND RELOADING
+// --------------------------------------
+function onNavigate(details) {
+  if (details.url && isSpUrl(details.url)) {
+    console.log('SPEX:background: Recognized SP navigation to: ' + details.url + '.' + 'Refreshing count...');
+    getSPTabId((id) => {
+      initInterfaceForTab(id);
+    });
+  }
+}
+
+function isSpUrl(url) {
+  return url.startsWith(SP_URL);
+}
+
+chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
+  if (isSpUrl(tab.url)) {
+    initInterfaceForTab(tabId);
+  }
+});
+
+// also init when url was entered later
+if (chrome.webNavigation && chrome.webNavigation.onDOMContentLoaded &&
+  chrome.webNavigation.onReferenceFragmentUpdated) {
+  const filters = {
+    url: [{ urlContains: SP_URL.replace(/^https?\:\/\//, '') }]
+  };
+  chrome.webNavigation.onDOMContentLoaded.addListener(onNavigate, filters);
+} else {
+  chrome.tabs.onUpdated.addListener(function(_, details) {
+    onNavigate(details);
+  });
+}
