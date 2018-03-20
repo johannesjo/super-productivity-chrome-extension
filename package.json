@@ -4,7 +4,7 @@
   "description": "Allows communication with jira and idle time tracking for super productivity inside the browser.",
   "scripts": {
     "build": "node utils/build.js && zip -r sp-ext.zip ./build",
-    "start": "node utils/webserver.js"
+    "start": "PORT=3123 node utils/webserver.js"
   },
   "devDependencies": {
     "clean-webpack-plugin": "^0.1.17",
