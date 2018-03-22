@@ -7,8 +7,25 @@ export class JiraApiWrapper {
     this.queryStringParser = queryStringParser.stringify;
   }
 
+  isConfigSufficient(config) {
+    if (!config) {
+      throw 'SPEX:JiraApiWrapper: No request config.';
+    } else if (!config.isJiraEnabled) {
+      throw 'SPEX:JiraApiWrapper: Jira not enabled.';
+    } else if (!config.host) {
+      throw 'SPEX:JiraApiWrapper: Host not configured.';
+    } else {
+      return true;
+    }
+  }
+
   execRequest(request) {
     console.log(`SPEX:JiraApiWrapper:Request:${request.apiMethod}`, request);
+
+    if (!this.isConfigSufficient(request.config)) {
+      return;
+    }
+
     if (request.apiMethod && this[request.apiMethod]) {
       return this[request.apiMethod](request);
     } else {
