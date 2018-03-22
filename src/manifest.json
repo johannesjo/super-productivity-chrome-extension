@@ -30,6 +30,7 @@
     "activeTab",
     "tabs",
     "<all_urls>",
-    "webRequest"
+    "webRequest",
+    "idle"
   ]
 }

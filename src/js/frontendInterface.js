@@ -26,10 +26,21 @@ function attachEventListenerForApp(evName, evHandlerFn) {
 function init() {
   console.log('SPEX injected');
 
-  chrome.runtime.onMessage.addListener((request) => {
-    const ev = new CustomEvent('SP_JIRA_RESPONSE', {
-      detail: request,
-    });
+  chrome.runtime.onMessage.addListener((data) => {
+    let ev;
+    switch (data.type) {
+      case 'JIRA_RESPONSE':
+        ev = new CustomEvent('SP_JIRA_RESPONSE', {
+          detail: data.request,
+        });
+        break;
+      case 'IDLE':
+        ev = new CustomEvent('IDLE_TIME', {
+          detail: data.idleTimeInMs,
+        });
+        break;
+    }
+
     window.dispatchEvent(ev);
   });
 

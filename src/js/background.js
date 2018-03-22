@@ -2,10 +2,10 @@ import '../img/icon_32x32.png'
 import '../img/icon_128x128.png'
 import { IS_DEV } from 'cfg';
 import { JiraApiWrapper } from './jira';
+import { IdleHandler } from './idle-handler';
 
 let isInterfaceInitialized = false;
 const jira = new JiraApiWrapper();
-
 let SP_URL = 'https://super-productivity.com/app';
 
 if (IS_DEV) {
@@ -13,12 +13,30 @@ if (IS_DEV) {
   SP_URL = 'http://localhost';
 }
 
+// init idle handler
+new IdleHandler(15, onIdle);
+
 // init once
 getSPTabId((id) => {
   if (id) {
     initInterfaceForTab(id);
   }
 });
+
+function onIdle(idleTimeInMs) {
+  console.log(`SPEX:background:isIdle: for ${idleTimeInMs}`);
+
+  getSPTabId((id) => {
+    if (id) {
+      chrome.tabs.sendMessage(id, {
+        type: 'IDLE',
+        idleTimeInMs
+      });
+    } else {
+      throw 'SPEX:background: No super productivity tab id';
+    }
+  });
+}
 
 // MAIN
 // ---------------------------------
@@ -29,7 +47,10 @@ function handleJiraRequest(request) {
 
       getSPTabId((id) => {
         if (id) {
-          chrome.tabs.sendMessage(id, res);
+          chrome.tabs.sendMessage(id, {
+            type: 'JIRA_RESPONSE',
+            response: res
+          });
         } else {
           throw 'SPEX:background: No super productivity tab id';
         }
