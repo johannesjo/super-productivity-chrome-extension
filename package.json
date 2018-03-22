@@ -3,12 +3,15 @@
   "version": "0.4.3",
   "description": "Allows communication with jira and idle time tracking for super productivity inside the browser.",
   "scripts": {
-    "build": "node utils/build.js && zip -r sp-ext.zip ./build",
-    "start": "node utils/webserver.js"
+    "build": "cross-env NODE_ENV=production node utils/build.js && zip -r sp-ext.zip ./build",
+    "build-dev": "cross-env NODE_ENV=development node utils/build.js && zip -r sp-ext.zip ./build",
+    "start": "node utils/webserver.js",
+    "start-production": "cross-env NODE_ENV=production node utils/webserver.js"
   },
   "devDependencies": {
     "clean-webpack-plugin": "^0.1.17",
     "copy-webpack-plugin": "^4.2.0",
+    "cross-env": "^5.1.4",
     "css-loader": "^0.25.0",
     "file-loader": "^0.11.2",
     "fs-extra": "^0.30.0",

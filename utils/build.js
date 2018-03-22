@@ -3,9 +3,6 @@ var webpack = require("webpack"),
 
 delete config.chromeExtensionBoilerplate;
 
-// always build for production
-process.env.NODE_ENV = 'production';
-
 webpack(
   config,
   function(err) {
