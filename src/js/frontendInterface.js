@@ -31,7 +31,7 @@ function init() {
     switch (data.type) {
       case 'JIRA_RESPONSE':
         ev = new CustomEvent('SP_JIRA_RESPONSE', {
-          detail: data.request,
+          detail: data.response,
         });
         break;
       case 'IDLE':
