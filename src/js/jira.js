@@ -161,10 +161,14 @@ export class JiraApiWrapper {
 
   findIssue(orgRequest) {
     const issueId = orgRequest.arguments[0];
+    const expandParam = orgRequest.arguments[1];
 
     return this.doRequest(orgRequest, {
       pathname: `issue/${issueId}`,
       method: 'GET',
+      query: {
+        expand: expandParam || ''
+      }
     });
   }
 
