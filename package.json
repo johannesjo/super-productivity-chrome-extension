@@ -1,6 +1,6 @@
 {
   "name": "super-productivity-chrome-extension",
-  "version": "0.4.7",
+  "version": "0.4.8",
   "description": "Allows communication with jira and idle time tracking for super productivity inside the browser.",
   "scripts": {
     "build": "cross-env NODE_ENV=production node utils/build.js && zip -r sp-ext.zip ./build",
