@@ -57,7 +57,7 @@ export class JiraApiWrapper {
           'authorization': `Basic ${encoded}`,
           'Content-Type': 'application/json'
         }
-      }, function(err, res, body) {
+      }, function (err, res, body) {
         if (err) {
           resolve({
             error: err,
@@ -180,6 +180,20 @@ export class JiraApiWrapper {
       pathname: `issue/${issueId}/transitions`,
       method: 'POST',
       body: issueTransition
+    });
+  }
+
+  listStatus(orgRequest) {
+    return this.doRequest(orgRequest, {
+      pathname: `status`,
+      method: 'GET',
+    });
+  }
+
+  getCurrentUser(orgRequest) {
+    return this.doRequest(orgRequest, {
+      pathname: `myself`,
+      method: 'GET',
     });
   }
 }

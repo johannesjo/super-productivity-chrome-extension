@@ -99,11 +99,11 @@ function getSPTabId(cb) {
 chrome.browserAction.onClicked.addListener((tab) => {
   console.log('CLICK', tab);
   if (!isInterfaceInitialized) {
-    chrome.tabs.create({ url: SP_URL });
+    chrome.tabs.create({url: SP_URL});
   }
 });
 
-chrome.runtime.onMessage.addListener(function(request) {
+chrome.runtime.onMessage.addListener((request) => {
   getSPTabId((id) => {
     if (!id) {
       throw 'No super productivity tab id';
