@@ -80,7 +80,7 @@ function getSPTabId(cb) {
   let _tabId = false;
   chrome.tabs.query({
     url: [
-      SP_URL + '/*',
+      SP_URL + '*/*',
     ],
   }, (tabs) => {
     if (tabs && tabs[0]) {
