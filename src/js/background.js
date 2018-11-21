@@ -7,10 +7,15 @@ import { IdleHandler } from './idle-handler';
 let isInterfaceInitialized = false;
 const jira = new JiraApiWrapper();
 let SP_URL = 'https://super-productivity.com/app';
+const QUERY_URLS = [
+  SP_URL,
+  'https://super-productivity.com/app2'
+];
 
 if (IS_DEV) {
   console.log('SPEX:background IS_DEV=true');
   SP_URL = 'http://localhost';
+  QUERY_URLS.push(SP_URL)
 }
 
 // init idle handler
@@ -79,9 +84,7 @@ function initInterfaceForTab(passedTabId) {
 function getSPTabId(cb) {
   let _tabId = false;
   chrome.tabs.query({
-    url: [
-      SP_URL + '*/*',
-    ],
+    url: QUERY_URLS.map(url => url + '/*'),
   }, (tabs) => {
     if (tabs && tabs[0]) {
       _tabId = tabs[0].id;
@@ -120,8 +123,8 @@ chrome.runtime.onMessage.addListener((request) => {
 // HANDLE NAVIGATING TO SP AND RELOADING
 // --------------------------------------
 
-function isSpUrl(url) {
-  return url.startsWith(SP_URL);
+function isSpUrl(urlToCheck) {
+  return QUERY_URLS.find(url => urlToCheck.startsWith(url));
 }
 
 // also init when url was entered later
