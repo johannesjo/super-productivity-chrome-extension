@@ -1,10 +1,8 @@
 import xhr from 'xhr';
-import queryStringParser from 'query-string';
 
 export class JiraApiWrapper {
   constructor() {
     this.xhr = xhr;
-    this.queryStringParser = queryStringParser.stringify;
   }
 
   isConfigSufficient(config) {
