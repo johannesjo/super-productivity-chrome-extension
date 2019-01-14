@@ -6,10 +6,11 @@ import { IdleHandler } from './idle-handler';
 
 let isInterfaceInitialized = false;
 const jira = new JiraApiWrapper();
-let SP_URL = 'https://super-productivity.com/app';
+let SP_URL = 'https://app.super-productivity.com';
 const QUERY_URLS = [
   SP_URL,
-  'https://super-productivity.com/app2'
+  'https://super-productivity.com/app2',
+  'https://super-productivity.com/app',
 ];
 
 if (IS_DEV) {
