@@ -105,6 +105,22 @@ export class JiraApiWrapper {
     });
   }
 
+  issuePicker(orgRequest) {
+    const jql = orgRequest.arguments.length > 1 && orgRequest.arguments[1] !== undefined ? orgRequest.arguments[1] : '';
+
+    return this.doRequest(orgRequest, {
+      pathname: '/issue/picker',
+      method: 'GET',
+      followAllRedirects: true,
+      qs: {
+        showSubTasks: true,
+        showSubTaskParent: true,
+        query: orgRequest.arguments[0],
+        currentJQL: jql
+      },
+    });
+  }
+
   addWorklog(orgRequest) {
     const issueId = orgRequest.arguments[0];
     const worklog = orgRequest.arguments[1];
