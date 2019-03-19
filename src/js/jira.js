@@ -109,7 +109,7 @@ export class JiraApiWrapper {
     const jql = orgRequest.arguments.length > 1 && orgRequest.arguments[1] !== undefined ? orgRequest.arguments[1] : '';
 
     return this.doRequest(orgRequest, {
-      pathname: '/issue/picker',
+      pathname: 'issue/picker',
       method: 'GET',
       followAllRedirects: true,
       qs: {
