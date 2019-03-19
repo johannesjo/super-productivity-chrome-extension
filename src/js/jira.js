@@ -112,7 +112,7 @@ export class JiraApiWrapper {
       pathname: 'issue/picker',
       method: 'GET',
       followAllRedirects: true,
-      qs: {
+      query: {
         showSubTasks: true,
         showSubTaskParent: true,
         query: orgRequest.arguments[0],
