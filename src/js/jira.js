@@ -206,6 +206,13 @@ export class JiraApiWrapper {
     });
   }
 
+  listFields(orgRequest) {
+    return this.doRequest(orgRequest, {
+      pathname: 'field',
+      method: 'GET',
+    });
+  }
+
   getCurrentUser(orgRequest) {
     return this.doRequest(orgRequest, {
       pathname: `myself`,
