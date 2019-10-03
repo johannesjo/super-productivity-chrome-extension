@@ -1,6 +1,5 @@
 {
   "name": "Super Productivity",
-  "options_page": "options.html",
   "background": {
     "scripts": [
       "background.bundle.js"
@@ -22,16 +21,14 @@
       ],
       "matches": [
         "*://super-productivity.com/app/*",
-        "*://super-productivity.com/app2/*"
+        "*://app.super-productivity.com/*"
       ],
       "all_frames": true
     }
   ],
   "permissions": [
-    "activeTab",
     "tabs",
     "<all_urls>",
-    "webRequest",
     "idle"
   ]
 }

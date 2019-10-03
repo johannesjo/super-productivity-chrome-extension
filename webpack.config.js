@@ -27,8 +27,8 @@ const IS_DEV = (env.NODE_ENV === 'development');
 
 const options = {
   entry: {
-    popup: path.join(__dirname, 'src', 'js', 'popup.js'),
-    options: path.join(__dirname, 'src', 'js', 'options.js'),
+    // popup: path.join(__dirname, 'src', 'js', 'popup.js'),
+    // options: path.join(__dirname, 'src', 'js', 'options.js'),
     background: path.join(__dirname, 'src', 'js', 'background.js'),
     frontendInterface: path.join(__dirname, 'src', 'js', 'frontendInterface.js')
   },

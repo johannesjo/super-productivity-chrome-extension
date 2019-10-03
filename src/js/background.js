@@ -8,9 +8,7 @@ let isInterfaceInitialized = false;
 const jira = new JiraApiWrapper();
 let SP_URL = 'https://app.super-productivity.com';
 const QUERY_URLS = [
-  SP_URL,
-  'https://super-productivity.com/app2',
-  'https://super-productivity.com/app',
+  SP_URL
 ];
 
 if (IS_DEV) {
