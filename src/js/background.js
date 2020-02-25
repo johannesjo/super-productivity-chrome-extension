@@ -47,7 +47,7 @@ function onIdle(idleTimeInMs) {
 function handleJiraRequest(request) {
   jira.execRequest(request)
     .then((res) => {
-      console.log(`SPEX:background:jira.execRequest:${request.apiMethod}:Response:`, res);
+      console.log(`SPEX:background:jira.execRequest:Response:`, res);
 
       getSPTabId((id) => {
         if (id) {

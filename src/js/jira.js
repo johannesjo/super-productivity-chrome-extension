@@ -20,7 +20,12 @@ export class JiraApiWrapper {
   }
 
   execRequest(request) {
-    console.log(`SPEX:JiraApiWrapper:Request:${request.apiMethod}`, request);
+    console.log(`SPEX:JiraApiWrapper:Request:`, request);
+
+    // NEW APPROACH
+    if (request && request.requestId && request.requestInit) {
+      return this._newApproach(request);
+    }
 
     if (!this.isConfigSufficient(request.config)) {
       return;
@@ -31,6 +36,25 @@ export class JiraApiWrapper {
     } else {
       throw new Error('SPEX:JiraApiWrapper: invalid request ' + request.apiMethod);
     }
+  }
+
+
+  _newApproach({requestId, requestInit, url}) {
+    return fetch(url, requestInit)
+      .then((response) => {
+        console.log(response);
+
+        // console.log('JIRA_RAW_RESPONSE', response);
+        if (!response.ok) {
+          throw Error(response.statusText);
+        }
+        return response;
+      })
+      .then(res => res.json())
+      .then(res => ({
+        response: res,
+        requestId
+      }));
   }
 
   _b64EncodeUnicode(str) {
