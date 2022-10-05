@@ -12,7 +12,7 @@
     "clean-webpack-plugin": "^0.1.17",
     "copy-webpack-plugin": "^4.2.0",
     "cross-env": "^5.1.4",
-    "css-loader": "^0.25.0",
+    "css-loader": "^6.7.1",
     "file-loader": "^0.11.2",
     "fs-extra": "^0.30.0",
     "html-loader": "^0.4.5",
