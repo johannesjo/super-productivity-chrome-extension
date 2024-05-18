@@ -48,6 +48,7 @@ function init() {
 
 // set permanent info for frontend
   window.localStorage.setItem('SUPER_PRODUCTIVITY_CHROME_EXTENSION', 'IS_ENABLED');
+  console.log('I am here!');
 
   const initEv = new Event('SP_EXTENSION_READY');
   window.dispatchEvent(initEv);

@@ -98,7 +98,7 @@ function getSPTabId(cb) {
 
 // LISTENER
 // ------------------------------------
-chrome.browserAction.onClicked.addListener((tab) => {
+chrome.action.onClicked.addListener((tab) => {
   console.log('CLICK', tab);
   if (!isInterfaceInitialized) {
     chrome.tabs.create({url: SP_URL});
